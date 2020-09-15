@@ -1,23 +1,23 @@
-import colors
 import tcod
+import esper
+
+import colors
 from simulation.components.renderable import Renderable
 from simulation.components.name import Name
-from simulation.entity_manager import EntityManager
 from tcod.console import Console
 
 
 class Sidebar(tcod.event.EventDispatch[None]):
 
-    def __init__(self, entity_manager: EntityManager):
-        self.entity_manager = entity_manager
+    def __init__(self, world:  esper.World):
+        self.world = world
 
     def render(self, console: Console, x: int, y: int, width: int, height: int) -> None:
         self._render_header(console, x, y)
         console.print(x, y+1, "∙"*width)
         self._render_entity_list(console, x, y+2, width, height - 2)
 
-
-    def ev_keyup(event: tcod.event.KeyDown) -> None:
+    def ev_keyup(self, event: tcod.event.KeyDown) -> None:
         pass
 
     def _render_header(self, console: Console, x: int, y: int) -> None:
@@ -29,9 +29,7 @@ class Sidebar(tcod.event.EventDispatch[None]):
     def _render_entity_list(self, console: Console, x: int, y: int, width: int, height: int) -> None:
         line = 0
         first = True
-        for e in self.entity_manager.entities:
-            entity_renderable = e.get_component(Renderable)
-            entity_name = e.get_component(Name)
+        for _, (entity_renderable, entity_name) in self.world.get_components(Renderable, Name):
             if first:
                 console.print(x+1, y+line, "►", colors.TEXT_DEFAULT)
                 first = False

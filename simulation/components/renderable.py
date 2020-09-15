@@ -1,9 +1,6 @@
 from typing import Tuple
 
-from simulation.component import Component
-
-
-class Renderable(Component):
+class Renderable():
 
     def __init__(self, char: str, color: Tuple[int, int, int]):
         super().__init__()

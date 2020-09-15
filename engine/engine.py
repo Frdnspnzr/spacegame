@@ -10,10 +10,10 @@ from engine.event_handler import EventHandler
 from engine.screen import Screen
 from engine.sidebar import Sidebar
 import simulation.entity_factory as factory
-from simulation.entity_manager import EntityManager
 from simulation.components.position import Position
 from tcod.console import Console
 from tcod.context import Context
+import esper
 
 
 class Engine:
@@ -21,10 +21,10 @@ class Engine:
     UPDATE_RATE = 1/60
 
     def __init__(self):
-        self.entity_manager = EntityManager()
+        self.world = esper.World()
         self.event_handler = EventHandler()
-        self.screen = Screen(self.entity_manager)
-        self.sidebar = Sidebar(self.entity_manager)
+        self.screen = Screen(self.world)
+        self.sidebar = Sidebar(self.world)
 
         self.last_update = time.monotonic()
         self.accumulator = 0
@@ -33,27 +33,24 @@ class Engine:
         rand_y = Random()
 
         # Add player ship
-        ship = factory.player_ship()
-        self.entity_manager.add(ship)
-        self.entity_manager.player = ship
+        self.player_ship = factory.player_ship(self.world)
 
         # Add some asteroids
         for _ in range(150):
-            asteroid = factory.asteroid()
+            asteroid = factory.asteroid(self.world)
             position = Position(int(50 * rand_x.guass(0, 0.3)), int(50 * rand_y.guass(0, 0.3)))
-            asteroid.add_component(position)
-            self.entity_manager.add(asteroid)
+            self.world.add_component(asteroid, position)
 
     def update(self) -> None:
         self.__update_accumulator()
         if self.accumulator > Engine.UPDATE_RATE:
             self.accumulator = self.accumulator - Engine.UPDATE_RATE
-            self.entity_manager.update(Engine.UPDATE_RATE)
+            self.world.process(Engine.UPDATE_RATE)
 
     def render(self, console: Console, context: Context) -> None:
 
         self.__mockup_render(console)
-        self.screen.render_main(console, 1, 1, SCREEN_WIDTH-SIDEBAR_WIDTH-1, SCREEN_HEIGHT-CONSOLE_HEIGHT-2)
+        self.screen.render_main(console, self.player_ship, 1, 1, SCREEN_WIDTH-SIDEBAR_WIDTH-1, SCREEN_HEIGHT-CONSOLE_HEIGHT-2)
         self.sidebar.render(console, SCREEN_WIDTH-SIDEBAR_WIDTH+1, 1, SIDEBAR_WIDTH-2, SCREEN_HEIGHT-8)
         self.render_frames(console)
 

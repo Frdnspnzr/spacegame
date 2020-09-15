@@ -1,5 +1,2 @@
-from simulation.component import Component
-
-
-class Player(Component):
+class Player():
     pass

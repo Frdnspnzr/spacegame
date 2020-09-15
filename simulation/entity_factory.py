@@ -5,19 +5,19 @@ from simulation.components.player import Player
 from simulation.components.position import Position
 from simulation.components.renderable import Renderable
 from simulation.components.name import Name
-from simulation.entity import Entity
+import esper
 
 
-def player_ship() -> Entity:
-    e = Entity()
-    e.add_component(Player())
-    e.add_component(Position(0, 0))
-    e.add_component(Renderable("@", colors.OBJECT_PLAYER))
-    e.add_component(Name("[PLR-12345] Player ship"))
-    return e
+def player_ship(world: esper.World) -> int:
+    return world.create_entity(
+        Player(),
+        Position(0, 0),
+        Renderable("@", colors.OBJECT_PLAYER),
+        Name("[PLR-12345] Player ship")
+    )
 
-def asteroid() -> Entity:
-    e = Entity()
-    e.add_component(Renderable("#", colors.OBJECT_JUNK))
-    e.add_component(Name("Asteroid"))
-    return e
+def asteroid(world: esper.World) -> int:
+    return world.create_entity(
+        Renderable("#", colors.OBJECT_JUNK),
+        Name("Asteroid")
+    )

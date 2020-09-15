@@ -1,7 +1,4 @@
-from simulation.component import Component
-
-
-class Position(Component):
+class Position():
 
     def __init__(self, x: int, y: int):
         super().__init__()

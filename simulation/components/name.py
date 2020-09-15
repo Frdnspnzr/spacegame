@@ -1,7 +1,4 @@
-from simulation.component import Component
-
-
-class Name(Component):
+class Name():
 
     def __init__(self, name: str):
         super().__init__()
