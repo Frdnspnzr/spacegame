@@ -9,6 +9,7 @@ from simulation.components.player import Player
 from simulation.components.position import Position
 from simulation.components.renderable import Renderable
 from simulation.components.name import Name
+from engine import engine
 
 asteroid_counter = 0
 
@@ -17,6 +18,7 @@ def player_ship(world: esper.World) -> int:
         Player(),
         Position(0, 0),
         Renderable("@", colors.OBJECT_PLAYER),
+        Velocity(1 * engine.UPDATE_RATE, 0.5 * engine.UPDATE_RATE),
         Selectable(),
         Name("Player ship", "PLR-12345")
     )

@@ -12,14 +12,15 @@ from engine.screen import Screen
 from engine.sidebar import Sidebar
 import simulation.entity_factory as factory
 from simulation.components.position import Position
+from simulation.processors.movement import MovementProcessor
 from tcod.console import Console
 from tcod.context import Context
 import esper
 
 
-class Engine:
+UPDATE_RATE = 1/60
 
-    UPDATE_RATE = 1/60
+class Engine:
 
     def __init__(self):
         self.world = esper.World()
@@ -43,11 +44,14 @@ class Engine:
             position = Position(int(50 * rand_x.guass(0, 0.3)), int(50 * rand_y.guass(0, 0.3)))
             self.world.add_component(asteroid, position)
 
+        # Add processors
+        self.world.add_processor(MovementProcessor(), priority=3)
+
     def update(self) -> None:
         self.__update_accumulator()
-        if self.accumulator > Engine.UPDATE_RATE:
-            self.accumulator = self.accumulator - Engine.UPDATE_RATE
-            self.world.process(Engine.UPDATE_RATE)
+        if self.accumulator > UPDATE_RATE:
+            self.accumulator = self.accumulator - UPDATE_RATE
+            self.world.process(UPDATE_RATE)
 
     def render(self, console: Console, context: Context) -> None:
 
