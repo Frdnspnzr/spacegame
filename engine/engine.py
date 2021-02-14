@@ -1,4 +1,5 @@
 from __future__ import annotations
+from simulation.components.selectable import Selectable
 
 import time
 
@@ -34,6 +35,7 @@ class Engine:
 
         # Add player ship
         self.player_ship = factory.player_ship(self.world)
+        self.world.component_for_entity(self.player_ship, Selectable).selected_main = True
 
         # Add some asteroids
         for _ in range(150):
@@ -59,6 +61,7 @@ class Engine:
 
     def handle_events(self) -> None:
         for event in tcod.event.get():
+            self.sidebar.dispatch(event)
             self.event_handler.dispatch(event)
 
     def render_frames(self, console: Console) -> None:
