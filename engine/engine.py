@@ -1,26 +1,29 @@
 from __future__ import annotations
-from simulation.components.selectable import Selectable
 
 import time
 
-import renderer.primitives as primitives
+import esper
 import tcod.event
+import tcod
+from tcod.console import Console
+from tcod.context import Context
 from tcod.random import Random
+
+import renderer.primitives as primitives
+import simulation.entity_factory as factory
 from constants import CONSOLE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, SIDEBAR_WIDTH, STATUS_HEIGHT
 from engine.event_handler import EventHandler
 from engine.screen import Screen
 from engine.sidebar import Sidebar
-import simulation.entity_factory as factory
 from simulation.components.position import Position
+from simulation.components.selectable import Selectable
+from simulation.components.acceleration import Acceleration
+from simulation.processors.acceleration import AccelerationProcessor
 from simulation.processors.movement import MovementProcessor
-from tcod.console import Console
-from tcod.context import Context
-import esper
-
 
 UPDATE_RATE = 1/60
 
-class Engine:
+class Engine(tcod.event.EventDispatch[None]):
 
     def __init__(self):
         self.world = esper.World()
@@ -46,6 +49,7 @@ class Engine:
 
         # Add processors
         self.world.add_processor(MovementProcessor(), priority=3)
+        self.world.add_processor(AccelerationProcessor(), priority=4)
 
     def update(self) -> None:
         self.__update_accumulator()
@@ -66,6 +70,7 @@ class Engine:
     def handle_events(self) -> None:
         for event in tcod.event.get():
             self.sidebar.dispatch(event)
+            self.dispatch(event)
             self.event_handler.dispatch(event)
 
     def render_frames(self, console: Console) -> None:
@@ -89,6 +94,28 @@ class Engine:
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH, 0, "╦")
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH, SCREEN_HEIGHT-STATUS_HEIGHT-1, "╠")
         console.print(SCREEN_WIDTH-1, SCREEN_HEIGHT-STATUS_HEIGHT-1, "╣")
+
+    def ev_keyup(self, event: tcod.event.KeyDown) -> None:
+
+        acceleration = self.world.component_for_entity(self.player_ship, Acceleration)
+
+        if event.scancode is tcod.event.SCANCODE_W or tcod.event.SCANCODE_S:
+            acceleration.y = 0
+        if event.scancode is tcod.event.SCANCODE_A or tcod.event.SCANCODE_D:
+            acceleration.x = 0
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> None:
+
+        acceleration = self.world.component_for_entity(self.player_ship, Acceleration)
+
+        if event.scancode is tcod.event.SCANCODE_W:
+            acceleration.y = -0.25 * UPDATE_RATE
+        if event.scancode is tcod.event.SCANCODE_S:
+            acceleration.y = 0.25 * UPDATE_RATE
+        if event.scancode is tcod.event.SCANCODE_A:
+            acceleration.x = -0.25 * UPDATE_RATE
+        if event.scancode is tcod.event.SCANCODE_D:
+            acceleration.x = 0.25 * UPDATE_RATE
 
     def __update_accumulator(self) -> None:
         now = time.monotonic()

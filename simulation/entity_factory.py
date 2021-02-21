@@ -1,15 +1,16 @@
 from __future__ import annotations
-from simulation.components.selectable import Selectable
 
 import esper
 
 import colors
-from simulation.components.velocity import Velocity
+from engine import engine
+from simulation.components.acceleration import Acceleration
+from simulation.components.name import Name
 from simulation.components.player import Player
 from simulation.components.position import Position
 from simulation.components.renderable import Renderable
-from simulation.components.name import Name
-from engine import engine
+from simulation.components.selectable import Selectable
+from simulation.components.velocity import Velocity
 
 asteroid_counter = 0
 
@@ -18,7 +19,8 @@ def player_ship(world: esper.World) -> int:
         Player(),
         Position(0, 0),
         Renderable("@", colors.OBJECT_PLAYER),
-        Velocity(1 * engine.UPDATE_RATE, 0.5 * engine.UPDATE_RATE),
+        Velocity(0, 0),
+        Acceleration(0, 0),
         Selectable(),
         Name("Player ship", "PLR-12345")
     )
