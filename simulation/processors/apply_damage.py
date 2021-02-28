@@ -2,6 +2,7 @@ from enum import Enum
 
 import esper
 
+from utility.math import clamp
 from simulation.components.destructable import Destructable
 from simulation.components.damageable import DamageTypes, Damageable
 
@@ -18,9 +19,18 @@ class ApplyDamageProcessor(esper.Processor):
     def process(self, *args, **kwargs):
         for _, (destructable, damageable) in self.world.get_components(Destructable, Damageable):
             for type in DamageTypes:
-                destructable.shield_current = max(0, destructable.shield_current - round(damageable.instances[type] * self.__damage_matrix[type, DefenceTypes.SHIELD]))
-                destructable.hull_current = max(0, destructable.hull_current - round(damageable.instances[type] * self.__damage_matrix[type, DefenceTypes.HULL]))
-                destructable.core_current = max(0, destructable.core_current - round(damageable.instances[type] * self.__damage_matrix[type, DefenceTypes.CORE]))
+                destructable.shield_current = clamp(
+                    destructable.shield_current - round(damageable.instances[type] * self.__damage_matrix[type, DefenceTypes.SHIELD]),
+                    0,
+                    destructable.shield_max)
+                destructable.hull_current = clamp(
+                    destructable.hull_current - round(damageable.instances[type] * self.__damage_matrix[type, DefenceTypes.HULL]),
+                    0,
+                    destructable.hull_max)
+                destructable.core_current = clamp(
+                    destructable.core_current - round(damageable.instances[type] * self.__damage_matrix[type, DefenceTypes.CORE]),
+                    0,
+                    destructable.core_max)
                 damageable.instances[type] = 0
 
     def __prepare_damage_matrix(self):
