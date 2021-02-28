@@ -3,8 +3,8 @@ from __future__ import annotations
 import time
 
 import esper
-import tcod.event
 import tcod
+import tcod.event
 from tcod.console import Console
 from tcod.context import Context
 from tcod.random import Random
@@ -15,10 +15,12 @@ from constants import CONSOLE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, SIDEBAR_WIDTH
 from engine.event_handler import EventHandler
 from engine.screen import Screen
 from engine.sidebar import Sidebar
+from simulation.components.acceleration import Acceleration
+from simulation.components.destructable import Destructable
 from simulation.components.position import Position
 from simulation.components.selectable import Selectable
-from simulation.components.acceleration import Acceleration
 from simulation.processors.acceleration import AccelerationProcessor
+from simulation.processors.apply_damage import ApplyDamageProcessor
 from simulation.processors.movement import MovementProcessor
 
 UPDATE_RATE = 1/60
@@ -48,8 +50,9 @@ class Engine(tcod.event.EventDispatch[None]):
             self.world.add_component(asteroid, position)
 
         # Add processors
-        self.world.add_processor(MovementProcessor(), priority=3)
-        self.world.add_processor(AccelerationProcessor(), priority=4)
+        self.world.add_processor(ApplyDamageProcessor(), priority=1)
+        self.world.add_processor(MovementProcessor(), priority=2)
+        self.world.add_processor(AccelerationProcessor(), priority=3)
 
     def update(self) -> None:
         self.__update_accumulator()
@@ -125,14 +128,16 @@ class Engine(tcod.event.EventDispatch[None]):
 
     def __mockup_render(self, console: Console) -> None:
 
+        values = self.world.component_for_entity(self.player_ship, Destructable)
+
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT-STATUS_HEIGHT, "CORE", fg=(235, 164, 52))
-        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT, 28, 0.97, (235, 164, 52))
+        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT, 28, values.core_percentage, (235, 164, 52))
 
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT-STATUS_HEIGHT+1, "HULL", fg=(168, 168, 168))
-        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT+1, 28, 0.3, (168, 168, 168))
+        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT+1, 28, values.hull_percentage, (168, 168, 168))
 
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT-STATUS_HEIGHT+2, "SHLD", fg=(109, 182, 214))
-        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT+2, 28, 0.56, (109, 182, 214))
+        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT+2, 28, values.shield_percentage, (109, 182, 214))
 
         console.print(0, SCREEN_HEIGHT-1, "[F1] MAIN", fg=(255, 255, 33))
         console.print(10, SCREEN_HEIGHT-1, "[F2] COMM")

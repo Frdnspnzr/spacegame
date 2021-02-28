@@ -5,6 +5,8 @@ import esper
 import colors
 from engine import engine
 from simulation.components.acceleration import Acceleration
+from simulation.components.damageable import Damageable
+from simulation.components.destructable import Destructable
 from simulation.components.name import Name
 from simulation.components.player import Player
 from simulation.components.position import Position
@@ -22,6 +24,8 @@ def player_ship(world: esper.World) -> int:
         Velocity(0, 0),
         Acceleration(0, 0),
         Selectable(),
+        Destructable(1000, 1000, 1000),
+        Damageable(),
         Name("Player ship", "PLR-12345")
     )
 
@@ -31,5 +35,6 @@ def asteroid(world: esper.World) -> int:
     return world.create_entity(
         Renderable("#", colors.OBJECT_JUNK),
         Selectable(),
+        Destructable(20, 100, 0),
         Name("Asteroid", f"AST-{asteroid_counter:05d}")
     )
