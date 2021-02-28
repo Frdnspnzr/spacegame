@@ -126,20 +126,13 @@ class Engine(tcod.event.EventDispatch[None]):
     def __mockup_render(self, console: Console) -> None:
 
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT-STATUS_HEIGHT, "CORE", fg=(235, 164, 52))
-        for x in range(SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_WIDTH-1):
-            console.print(x, SCREEN_HEIGHT-STATUS_HEIGHT, "█", fg=(235, 164, 52))
+        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT, 28, 0.97, (235, 164, 52))
 
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT-STATUS_HEIGHT+1, "HULL", fg=(168, 168, 168))
-        for x in range(SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_WIDTH-SIDEBAR_WIDTH+12):
-            console.print(x, SCREEN_HEIGHT-STATUS_HEIGHT+1, "█", fg=(168, 168, 168))
-        for x in range(SCREEN_WIDTH-SIDEBAR_WIDTH+12, SCREEN_WIDTH-1):
-            console.print(x, SCREEN_HEIGHT-STATUS_HEIGHT+1, "▒", fg=(168, 168, 168))
+        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT+1, 28, 0.3, (168, 168, 168))
 
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT-STATUS_HEIGHT+2, "SHLD", fg=(109, 182, 214))
-        for x in range(SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_WIDTH-SIDEBAR_WIDTH+24):
-            console.print(x, SCREEN_HEIGHT-STATUS_HEIGHT+2, "█", fg=(109, 182, 214))
-        for x in range(SCREEN_WIDTH-SIDEBAR_WIDTH+24, SCREEN_WIDTH-1):
-            console.print(x, SCREEN_HEIGHT-STATUS_HEIGHT+2, "▒", fg=(109, 182, 214))
+        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT+2, 28, 0.56, (109, 182, 214))
 
         console.print(0, SCREEN_HEIGHT-1, "[F1] MAIN", fg=(255, 255, 33))
         console.print(10, SCREEN_HEIGHT-1, "[F2] COMM")
