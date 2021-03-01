@@ -1,4 +1,5 @@
 from __future__ import annotations
+from simulation.components.behaviour import Behaviour
 
 import esper
 
@@ -26,6 +27,7 @@ def player_ship(world: esper.World) -> int:
         Selectable(),
         Destructable(1000, 1000, 1000),
         Damageable(),
+        Behaviour(),
         Name("Player ship", "PLR-12345")
     )
 
@@ -36,5 +38,8 @@ def asteroid(world: esper.World) -> int:
         Renderable("#", colors.OBJECT_JUNK),
         Selectable(),
         Destructable(20, 100, 0),
+        Behaviour(),
+        Velocity(0, 0),
+        Acceleration(0, 0),
         Name("Asteroid", f"AST-{asteroid_counter:05d}")
     )
