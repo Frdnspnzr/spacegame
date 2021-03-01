@@ -11,11 +11,13 @@ from tcod.random import Random
 
 import renderer.primitives as primitives
 import simulation.entity_factory as factory
+from behaviours.navigation import BehaviourFollow
 from constants import CONSOLE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, SIDEBAR_WIDTH, STATUS_HEIGHT
 from engine.event_handler import EventHandler
 from engine.screen import Screen
 from engine.sidebar import Sidebar
 from simulation.components.acceleration import Acceleration
+from simulation.components.behaviour import Behaviour
 from simulation.components.destructable import Destructable
 from simulation.components.position import Position
 from simulation.components.selectable import Selectable
@@ -45,10 +47,14 @@ class Engine(tcod.event.EventDispatch[None]):
         self.world.component_for_entity(self.player_ship, Selectable).selected_main = True
 
         # Add some asteroids
-        for _ in range(150):
+        for i in range(150):
             asteroid = factory.asteroid(self.world)
             position = Position(int(50 * rand_x.guass(0, 0.3)), int(50 * rand_y.guass(0, 0.3)))
             self.world.add_component(asteroid, position)
+            if i is 149:
+                b1 = BehaviourFollow(1, 3)
+                b2 = self.world.component_for_entity(asteroid, Behaviour)
+                b2.behaviours.append(b1)
 
         # Add processors
         self.world.add_processor(ApplyDamageProcessor(), priority=1)
