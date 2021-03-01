@@ -9,18 +9,18 @@ class Position():
         self.__x += x
         self.__y += y
 
-    def __getx(self):
+    def __get_x(self):
         return round(self.__x)
 
-    def __setx(self, val):
+    def __set_x(self, val):
         self.__x = val
 
-    x = property(__getx, __setx)
+    x = property(__get_x, __set_x)
 
-    def __gety(self):
+    def __get_y(self):
         return round(self.__y)
 
-    def __sety(self, val):
+    def __set_y(self, val):
         self.__y = val
 
-    y = property(__gety, __sety)
+    y = property(__get_y, __set_y)
