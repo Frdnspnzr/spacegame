@@ -21,6 +21,7 @@ from simulation.components.position import Position
 from simulation.components.selectable import Selectable
 from simulation.processors.acceleration import AccelerationProcessor
 from simulation.processors.apply_damage import ApplyDamageProcessor
+from simulation.processors.execute_behaviours import ExecuteBehaviourProcessor
 from simulation.processors.movement import MovementProcessor
 
 UPDATE_RATE = 1/60
@@ -51,8 +52,11 @@ class Engine(tcod.event.EventDispatch[None]):
 
         # Add processors
         self.world.add_processor(ApplyDamageProcessor(), priority=1)
-        self.world.add_processor(MovementProcessor(), priority=2)
-        self.world.add_processor(AccelerationProcessor(), priority=3)
+        self.world.add_processor(ExecuteBehaviourProcessor(), priority=1)
+
+        self.world.add_processor(AccelerationProcessor(), priority=2)
+
+        self.world.add_processor(MovementProcessor(), priority=3)
 
     def update(self) -> None:
         self.__update_accumulator()
