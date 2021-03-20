@@ -1,11 +1,11 @@
 from __future__ import annotations
-from simulation.components.behaviour import Behaviour
-
-import esper
 
 import colors
+import esper
 from engine import engine
+
 from simulation.components.acceleration import Acceleration
+from simulation.components.behaviour import Behaviour
 from simulation.components.damageable import Damageable
 from simulation.components.destructable import Destructable
 from simulation.components.name import Name
@@ -38,8 +38,6 @@ def asteroid(world: esper.World) -> int:
         Renderable("#", colors.OBJECT_JUNK),
         Selectable(),
         Destructable(20, 100, 0),
-        Behaviour(),
         Velocity(0, 0),
-        Acceleration(0, 0, 0.0005), #FIXME This is for testing purposes only (asteroids should not accelerate on their own)
         Name("Asteroid", f"AST-{asteroid_counter:05d}")
     )

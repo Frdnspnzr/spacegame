@@ -1,18 +1,17 @@
 import enum
 
-import esper
-import tcod
-from tcod.console import Console
-
 import colors
+import tcod
+from esper import World
 from simulation.components.name import Name
 from simulation.components.renderable import Renderable
 from simulation.components.selectable import Selectable
+from tcod.console import Console
 
 
 class Sidebar(tcod.event.EventDispatch[None]):
 
-    def __init__(self, world:  esper.World):
+    def __init__(self, world: World):
         self.world = world
         self.entity_list = []
 
@@ -75,7 +74,7 @@ class Sidebar(tcod.event.EventDispatch[None]):
             if entity_selectable.selected_main:
                 console.print(x+1, y+line, "►", colors.TEXT_DEFAULT)
                 first = False
-            name = f"[{entity_name.callsign}] {entity_name.name}"
+            name = entity_name.formatted_name
             console.print(x+3, y+line, name, entity_renderable.color)
             line = line + 1
             if line > height:

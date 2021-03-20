@@ -36,6 +36,3 @@ class Screen:
 
             if pos_x >= x and pos_y >= y and pos_x <= x + width and pos_y <= y + height:
                 console.print(mid_x + diff_x, mid_y + diff_y, entity_renderable.char, entity_renderable.color, background_color)
-
-    def render_console(self, console: Console, x: int, y: int, width: int, height: int) -> None:
-        pass
