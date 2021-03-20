@@ -14,9 +14,6 @@ class BehaviourGoto(Behaviour):
         self.__target_y = target_y
         self.__valid = True
 
-    def priority(self):
-        return super().priority()
-
     def valid(self):
         return self.__valid
 
@@ -34,10 +31,15 @@ class BehaviourGoto(Behaviour):
             self.__valid = False
             return
 
+        target_position = self._get_target_point(world, entity)
+        if target_position is None:
+            self.__valid = False
+            return
+
         v_self_position = np.array([self_position.x, self_position.y])
         v_self_velocity = np.array([self_velocity.x, self_velocity.y])
 
-        v_navigation_target = np.array(self._get_target_point(world, entity))
+        v_navigation_target = np.array(target_position)
 
         # What has to actually happen to get to the navigation target?
         v_course_correction = v_navigation_target - (v_self_position + v_self_velocity)
@@ -58,25 +60,19 @@ class BehaviourFollow(BehaviourGoto):
     def __init__(self, target: int, distance: int = 0):
         self.__distance = distance
         self.__target = target
-        self.__valid = True
-
-    def priority(self):
-        return super().priority()
-
-    def __valid(self):
-        return self.__valid
 
     def _get_target_point(self, world: World, entity: int) -> Tuple[int, int]:
+
+        if entity is self.__target:
+            return None
 
         # Prepare data
         try:
             self_position = world.component_for_entity(entity, Position)
             target_position = world.component_for_entity(self.__target, Position)
             target_velocity = world.component_for_entity(self.__target, Velocity)
-            self.__valid = super().valid()
         except KeyError:
-            self.__valid = False
-            return
+            return None
 
         v_self_position = np.array([self_position.x, self_position.y])
         v_target_position = np.array([target_position.x, target_position.y])
