@@ -23,7 +23,7 @@ def player_ship(world: esper.World) -> int:
         Position(0, 0),
         Renderable("@", colors.OBJECT_PLAYER),
         Velocity(0, 0),
-        Acceleration(0, 0),
+        Acceleration(0, 0, 0.001),
         Selectable(),
         Destructable(1000, 1000, 1000),
         Damageable(),
@@ -40,6 +40,6 @@ def asteroid(world: esper.World) -> int:
         Destructable(20, 100, 0),
         Behaviour(),
         Velocity(0, 0),
-        Acceleration(0, 0),
+        Acceleration(0, 0, 0.0005), #FIXME This is for testing purposes only (asteroids should not accelerate on their own)
         Name("Asteroid", f"AST-{asteroid_counter:05d}")
     )

@@ -44,7 +44,7 @@ class BehaviourGoto(Behaviour):
 
         #Enfore maximum acceleration
         v_course_correction = v_course_correction / np.linalg.norm(v_course_correction)
-        v_course_correction *= self._get_max_acceleration()
+        v_course_correction *= self_acceleration.max_acceleration
 
         #Accelerate to correct course
         self_acceleration.x = v_course_correction[0]
@@ -52,10 +52,6 @@ class BehaviourGoto(Behaviour):
 
     def _get_target_point(self) -> Tuple[int, int]:
         return (self.__target_x, self.__target_y)
-
-    def _get_max_acceleration(self) -> float:
-        # FIXME The maximum acceleration of entities should be a system.
-        return 0.001
 
 class BehaviourFollow(BehaviourGoto):
 
