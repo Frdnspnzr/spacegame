@@ -3,7 +3,7 @@ from typing import Tuple
 from tcod.console import Console
 
 
-def box(console: Console, x: int, y: int, width: int, height: int):
+def box(console: Console, x: int, y: int, width: int, height: int) -> None:
     for dx in range(0, width):
         console.print(x+dx, y, "═")
         console.print(x+dx, y+height-1, "═")
@@ -15,7 +15,7 @@ def box(console: Console, x: int, y: int, width: int, height: int):
     console.print(x, y+height-1, "╚")
     console.print(x+width-1, y+height-1, "╝")
 
-def bar(console: Console, x: int, y: int, width: int, fill: float, color: Tuple[int, int, int]):
+def bar(console: Console, x: int, y: int, width: int, fill: float, color: Tuple[int, int, int]) -> None:
     for cx in range(x, x + width):
         percentage = (cx - x) / width
         if percentage <= fill:

@@ -1,6 +1,6 @@
 import esper
-
 from simulation.components.behaviour import Behaviour
+
 
 class ExecuteBehaviourProcessor(esper.Processor):
 

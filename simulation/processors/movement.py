@@ -1,5 +1,4 @@
 import esper
-
 from simulation.components.position import Position
 from simulation.components.velocity import Velocity
 

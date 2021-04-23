@@ -1,7 +1,6 @@
 import esper
-
-from simulation.components.velocity import Velocity
 from simulation.components.acceleration import Acceleration
+from simulation.components.velocity import Velocity
 
 
 class AccelerationProcessor(esper.Processor):

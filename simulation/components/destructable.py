@@ -6,13 +6,13 @@ class Destructable:
         self.shield_max = self.shield_current = shield
 
     @property
-    def core_percentage(self):
+    def core_percentage(self) -> float:
         return self.core_current / self.core_max
 
     @property
-    def hull_percentage(self):
+    def hull_percentage(self) -> float:
         return self.hull_current / self.hull_max
 
     @property
-    def shield_percentage(self):
+    def shield_percentage(self) -> float:
         return self.shield_current / self.shield_max

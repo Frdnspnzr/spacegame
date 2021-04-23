@@ -1,10 +1,11 @@
 from enum import Enum
+from typing import Dict, Tuple
 
 import esper
-
-from utility.math import clamp
+from simulation.components.damageable import Damageable, DamageTypes
 from simulation.components.destructable import Destructable
-from simulation.components.damageable import DamageTypes, Damageable
+from utility.math import clamp
+
 
 class DefenceTypes(Enum):
     CORE = 1
@@ -33,8 +34,7 @@ class ApplyDamageProcessor(esper.Processor):
                     destructable.core_max)
                 damageable.instances[type] = 0
 
-    def __prepare_damage_matrix(self):
-
+    def __prepare_damage_matrix(self) -> Dict[Tuple[DamageTypes, DefenceTypes], float]:
         damage_matrix = dict()
 
         for defence in DefenceTypes:

@@ -1,4 +1,5 @@
-from typing import Tuple
+from typing import Optional, Tuple
+
 import numpy as np
 from engine.behaviour import Behaviour
 from esper import World
@@ -14,7 +15,8 @@ class BehaviourGoto(Behaviour):
         self.__target_y = target_y
         self.__valid = True
 
-    def valid(self):
+    @property
+    def valid(self) -> bool:
         return self.__valid
 
     def execute(self, world: World, entity: int):
@@ -52,7 +54,7 @@ class BehaviourGoto(Behaviour):
         self_acceleration.x = v_course_correction[0]
         self_acceleration.y = v_course_correction[1]
 
-    def _get_target_point(self) -> Tuple[int, int]:
+    def _get_target_point(self, world: World, entity: int) -> Optional[Tuple[int, int]]:
         return (self.__target_x, self.__target_y)
 
 class BehaviourFollow(BehaviourGoto):
@@ -61,7 +63,7 @@ class BehaviourFollow(BehaviourGoto):
         self.__distance = distance
         self.__target = target
 
-    def _get_target_point(self, world: World, entity: int) -> Tuple[int, int]:
+    def _get_target_point(self, world: World, entity: int) -> Optional[Tuple[int, int]]:
 
         if entity is self.__target:
             return None

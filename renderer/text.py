@@ -10,7 +10,8 @@ def with_highlighting(
     y: int,
     text: str,
     text_color: Tuple[int, int, int] = TEXT_DEFAULT,
-    highlight_color: Tuple[int, int, int] = TEXT_HIGHLIGHT):
+    highlight_color: Tuple[int, int, int] = TEXT_HIGHLIGHT
+    ) -> None:
     dx = x
     color = text_color
     for char in text:

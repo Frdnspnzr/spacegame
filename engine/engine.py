@@ -2,24 +2,15 @@ from __future__ import annotations
 
 import time
 
-import esper
-import tcod
-import tcod.event
-from tcod.console import Console as tConsole
-from tcod.context import Context
-from tcod.random import Random
-
 import colors
+import esper
 import renderer.primitives as primitives
 import simulation.entity_factory as factory
-from behaviours.navigation import BehaviourFollow
-from constants import CONSOLE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, SIDEBAR_WIDTH, STATUS_HEIGHT
-from engine.event_handler import EventHandler
-from engine.screen import Screen
-from engine.sidebar import Sidebar
-from engine.console import Console
+import tcod
+import tcod.event
+from constants import (CONSOLE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH,
+                       SIDEBAR_WIDTH, STATUS_HEIGHT)
 from simulation.components.acceleration import Acceleration
-from simulation.components.behaviour import Behaviour
 from simulation.components.destructable import Destructable
 from simulation.components.position import Position
 from simulation.components.selectable import Selectable
@@ -27,6 +18,14 @@ from simulation.processors.acceleration import AccelerationProcessor
 from simulation.processors.apply_damage import ApplyDamageProcessor
 from simulation.processors.execute_behaviours import ExecuteBehaviourProcessor
 from simulation.processors.movement import MovementProcessor
+from tcod.console import Console as tConsole
+from tcod.context import Context
+from tcod.random import Random
+
+from engine.console import Console
+from engine.event_handler import EventHandler
+from engine.screen import Screen
+from engine.sidebar import Sidebar
 
 UPDATE_RATE = 1/60
 

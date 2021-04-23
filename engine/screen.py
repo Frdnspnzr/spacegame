@@ -1,14 +1,12 @@
 from typing import Tuple
 
-import esper
-import tcod
-from tcod.console import Console
-
 import colors
+import esper
 from simulation.components.player import Player
 from simulation.components.position import Position
 from simulation.components.renderable import Renderable
 from simulation.components.selectable import Selectable
+from tcod.console import Console
 
 
 class Screen:

@@ -1,8 +1,10 @@
-from behaviours.navigation import BehaviourFollow
-from simulation.components.behaviour import Behaviour
+from typing import Optional, cast
+
 import tcod
+from behaviours.navigation import BehaviourFollow
 from esper import World
 from renderer import text
+from simulation.components.behaviour import Behaviour
 from simulation.components.name import Name
 from simulation.components.player import Player
 from simulation.components.selectable import Selectable
@@ -38,15 +40,17 @@ class Console(tcod.event.EventDispatch[None]):
         name = self.world.component_for_entity(self.follow_target, Name)
         return name.formatted_name
 
-    def _get_highlighted_name(self):
+    def _get_highlighted_name(self) -> str:
         for _, (selectable, name) in self.world.get_components(Selectable, Name):
-            if (selectable.selected_main):
+            if selectable.selected_main:
                 return name.formatted_name
+        return ""
 
-    def _get_highlighted_entity(self):
+    def _get_highlighted_entity(self) -> int:
         for entity, selectable in self.world.get_component(Selectable):
             if selectable.selected_main:
                 return entity
+        return -1
 
     def _set_player_following(self, target: int):
         behaviour = self.world.component_for_entity(self._get_player_entity(self.world), Behaviour)
@@ -56,6 +60,7 @@ class Console(tcod.event.EventDispatch[None]):
         behaviour = self.world.component_for_entity(self._get_player_entity(self.world), Behaviour)
         behaviour.behaviours = list() #FIXME Only possible because I know what behaviours are set
 
-    def _get_player_entity(self, world: World):
+    def _get_player_entity(self, world: World) -> int:
         for entity, _ in self.world.get_component(Player):
             return entity
+        return -1

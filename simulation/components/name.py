@@ -6,5 +6,5 @@ class Name():
         self.callsign = callsign
 
     @property
-    def formatted_name(self):
+    def formatted_name(self) -> str:
         return f"[{self.callsign}] {self.name}"

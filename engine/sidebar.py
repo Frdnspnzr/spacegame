@@ -1,5 +1,3 @@
-import enum
-
 import colors
 import tcod
 from esper import World
@@ -40,13 +38,13 @@ class Sidebar(tcod.event.EventDispatch[None]):
                 speed = 5
             self.__scanner_down(speed)
 
-    def __scanner_down(self, speed = 1):
+    def __scanner_down(self, speed = 1) -> None:
             self.__move_scanner(self.entity_list, speed)
 
-    def __scanner_up(self, speed = 1):
+    def __scanner_up(self, speed = 1) -> None:
             self.__move_scanner(reversed(self.entity_list), speed)
 
-    def __move_scanner(self, list, speed = 1):
+    def __move_scanner(self, list, speed = 1) -> None:
             counter = 999999
             selectable = None
             for entity in list:
