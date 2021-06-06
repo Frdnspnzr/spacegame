@@ -1,4 +1,6 @@
 from __future__ import annotations
+from simulation.processors.enforce_max_hp import EnforceMaxHPProcessor
+from simulation.processors.enforce_max_acceleration import EnforceMaxAccelerationProcessor
 
 import time
 
@@ -135,6 +137,11 @@ class Engine(tcod.event.EventDispatch[None]):
         # Low level gameplay housekeeping
         priority -= 1
         self.world.add_processor(ApplyAttributesProcessor(), priority)
+
+        # Attribute enforcement
+        priority -= 1
+        self.world.add_processor(EnforceMaxAccelerationProcessor(), priority)
+        self.world.add_processor(EnforceMaxHPProcessor(), priority)
 
         # Simulation effects, high priority
         priority -= 1
