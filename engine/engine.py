@@ -46,12 +46,14 @@ class Engine(tcod.event.EventDispatch[None]):
 
         # Add player ship
         self.player_ship = factory.player_ship(self.world)
-        self.world.component_for_entity(self.player_ship, Selectable).selected_main = True
+        self.world.component_for_entity(
+            self.player_ship, Selectable).selected_main = True
 
         # Add some asteroids
         for i in range(150):
             asteroid = factory.asteroid(self.world)
-            position = Position(int(50 * rand_x.guass(0, 0.3)), int(50 * rand_y.guass(0, 0.3)))
+            position = Position(int(50 * rand_x.guass(0, 0.3)),
+                                int(50 * rand_y.guass(0, 0.3)))
             self.world.add_component(asteroid, position)
 
         # Add processors
@@ -70,9 +72,12 @@ class Engine(tcod.event.EventDispatch[None]):
 
     def render(self, console: tConsole, context: Context) -> None:
         self.__mockup_render(console)
-        self.screen.render_main(console, self.player_ship, 1, 1, SCREEN_WIDTH-SIDEBAR_WIDTH-1, SCREEN_HEIGHT-CONSOLE_HEIGHT-2)
-        self.sidebar.render(console, SCREEN_WIDTH-SIDEBAR_WIDTH+1, 1, SIDEBAR_WIDTH-2, SCREEN_HEIGHT-8)
-        self.console.render(console, 1, SCREEN_HEIGHT-CONSOLE_HEIGHT, CONSOLE_HEIGHT-2, SCREEN_WIDTH-SIDEBAR_WIDTH-1)
+        self.screen.render_main(console, self.player_ship, 1, 1,
+                                SCREEN_WIDTH-SIDEBAR_WIDTH-1, SCREEN_HEIGHT-CONSOLE_HEIGHT-2)
+        self.sidebar.render(console, SCREEN_WIDTH-SIDEBAR_WIDTH +
+                            1, 1, SIDEBAR_WIDTH-2, SCREEN_HEIGHT-8)
+        self.console.render(console, 1, SCREEN_HEIGHT-CONSOLE_HEIGHT,
+                            CONSOLE_HEIGHT-2, SCREEN_WIDTH-SIDEBAR_WIDTH-1)
         self.render_frames(console)
 
         context.present(console)
@@ -91,24 +96,30 @@ class Engine(tcod.event.EventDispatch[None]):
         primitives.box(console, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-1)
 
         # Sidebar
-        primitives.box(console, SCREEN_WIDTH-SIDEBAR_WIDTH, 0, SIDEBAR_WIDTH, SCREEN_HEIGHT-1)
+        primitives.box(console, SCREEN_WIDTH-SIDEBAR_WIDTH,
+                       0, SIDEBAR_WIDTH, SCREEN_HEIGHT-1)
 
         # Status
-        primitives.box(console, SCREEN_WIDTH-SIDEBAR_WIDTH, SCREEN_HEIGHT-1-STATUS_HEIGHT, SIDEBAR_WIDTH, STATUS_HEIGHT)
+        primitives.box(console, SCREEN_WIDTH-SIDEBAR_WIDTH,
+                       SCREEN_HEIGHT-1-STATUS_HEIGHT, SIDEBAR_WIDTH, STATUS_HEIGHT)
 
         # Console
-        primitives.box(console, 0, SCREEN_HEIGHT-CONSOLE_HEIGHT-1, SCREEN_WIDTH-SIDEBAR_WIDTH+1, CONSOLE_HEIGHT)
+        primitives.box(console, 0, SCREEN_HEIGHT-CONSOLE_HEIGHT-1,
+                       SCREEN_WIDTH-SIDEBAR_WIDTH+1, CONSOLE_HEIGHT)
 
         # Corners
         console.print(0, SCREEN_HEIGHT-CONSOLE_HEIGHT-1, "╠")
-        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH, SCREEN_HEIGHT-CONSOLE_HEIGHT-1, "╣")
+        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH,
+                      SCREEN_HEIGHT-CONSOLE_HEIGHT-1, "╣")
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH, SCREEN_HEIGHT-2, "╩")
         console.print(SCREEN_WIDTH-SIDEBAR_WIDTH, 0, "╦")
-        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH, SCREEN_HEIGHT-STATUS_HEIGHT-1, "╠")
+        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH,
+                      SCREEN_HEIGHT-STATUS_HEIGHT-1, "╠")
         console.print(SCREEN_WIDTH-1, SCREEN_HEIGHT-STATUS_HEIGHT-1, "╣")
 
     def ev_keyup(self, event: tcod.event.KeyDown) -> None:
-        acceleration = self.world.component_for_entity(self.player_ship, Acceleration)
+        acceleration = self.world.component_for_entity(
+            self.player_ship, Acceleration)
 
         if event.scancode is tcod.event.SCANCODE_W or tcod.event.SCANCODE_S:
             acceleration.y = 0
@@ -122,17 +133,25 @@ class Engine(tcod.event.EventDispatch[None]):
         self.last_update = time.monotonic()
 
     def __mockup_render(self, console: tConsole) -> None:
-        values = self.world.component_for_entity(self.player_ship, Destructable)
+        values = self.world.component_for_entity(
+            self.player_ship, Destructable)
 
-        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT-STATUS_HEIGHT, "CORE", fg=(235, 164, 52))
-        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT, 28, values.core_percentage, (235, 164, 52))
+        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT -
+                      STATUS_HEIGHT, "CORE", fg=(235, 164, 52))
+        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT -
+                       STATUS_HEIGHT, 28, values.core_percentage, (235, 164, 52))
 
-        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT-STATUS_HEIGHT+1, "HULL", fg=(168, 168, 168))
-        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT+1, 28, values.hull_percentage, (168, 168, 168))
+        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT -
+                      STATUS_HEIGHT+1, "HULL", fg=(168, 168, 168))
+        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT -
+                       STATUS_HEIGHT+1, 28, values.hull_percentage, (168, 168, 168))
 
-        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT-STATUS_HEIGHT+2, "SHLD", fg=(109, 182, 214))
-        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT-STATUS_HEIGHT+2, 28, values.shield_percentage, (109, 182, 214))
+        console.print(SCREEN_WIDTH-SIDEBAR_WIDTH+1, SCREEN_HEIGHT -
+                      STATUS_HEIGHT+2, "SHLD", fg=(109, 182, 214))
+        primitives.bar(console, SCREEN_WIDTH-SIDEBAR_WIDTH+6, SCREEN_HEIGHT -
+                       STATUS_HEIGHT+2, 28, values.shield_percentage, (109, 182, 214))
 
-        console.print(0, SCREEN_HEIGHT-1, "[F1] MAIN", fg=colors.TEXT_HIGHLIGHT)
+        console.print(0, SCREEN_HEIGHT-1,
+                      "[F1] MAIN", fg=colors.TEXT_HIGHLIGHT)
         console.print(10, SCREEN_HEIGHT-1, "[F2] COMM")
         console.print(20, SCREEN_HEIGHT-1, "[F3] MODS")
