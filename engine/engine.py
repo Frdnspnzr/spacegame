@@ -15,6 +15,7 @@ from simulation.components.destructable import Destructable
 from simulation.components.position import Position
 from simulation.components.selectable import Selectable
 from simulation.processors.acceleration import AccelerationProcessor
+from simulation.processors.apply_attributes import ApplyAttributesProcessor
 from simulation.processors.apply_damage import ApplyDamageProcessor
 from simulation.processors.execute_behaviours import ExecuteBehaviourProcessor
 from simulation.processors.movement import MovementProcessor
@@ -57,12 +58,7 @@ class Engine(tcod.event.EventDispatch[None]):
             self.world.add_component(asteroid, position)
 
         # Add processors
-        self.world.add_processor(ApplyDamageProcessor(), priority=1)
-        self.world.add_processor(ExecuteBehaviourProcessor(), priority=1)
-
-        self.world.add_processor(AccelerationProcessor(), priority=2)
-
-        self.world.add_processor(MovementProcessor(), priority=3)
+        self.__initialize_processors()
 
     def update(self) -> None:
         self.__update_accumulator()
@@ -131,6 +127,27 @@ class Engine(tcod.event.EventDispatch[None]):
         difference = now - self.last_update
         self.accumulator = self.accumulator + difference
         self.last_update = time.monotonic()
+
+    def __initialize_processors(self):
+
+        priority = 1000
+
+        # Low level gameplay housekeeping
+        priority -= 1
+        self.world.add_processor(ApplyAttributesProcessor(), priority)
+
+        # Simulation effects, high priority
+        priority -= 1
+        self.world.add_processor(AccelerationProcessor(), priority)
+
+        # Simulation effects, low priority
+        priority -= 1
+        self.world.add_processor(MovementProcessor(), priority)
+        self.world.add_processor(ApplyDamageProcessor(), priority)
+
+        # AI and player actions
+        priority -= 1
+        self.world.add_processor(ExecuteBehaviourProcessor(), priority)
 
     def __mockup_render(self, console: tConsole) -> None:
         values = self.world.component_for_entity(
