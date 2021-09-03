@@ -1,8 +1,10 @@
 from typing import Optional, Tuple
 
 import numpy as np
-from engine.behaviour import Behaviour
 from esper import World
+from numpy import linalg
+
+from engine.behaviour import Behaviour
 from simulation.components.acceleration import Acceleration
 from simulation.components.position import Position
 from simulation.components.velocity import Velocity
@@ -20,8 +22,6 @@ class BehaviourGoto(Behaviour):
         return self.__valid
 
     def execute(self, world: World, entity: int):
-
-        # TODO As this does not break before reaching the target it enforces heavy overshooting that gradually gets worse
 
         # Prepare data
         try:
@@ -43,12 +43,19 @@ class BehaviourGoto(Behaviour):
 
         v_navigation_target = np.array(target_position)
 
+        # Calculate stopping distance
+        self_speed = np.linalg.norm(v_self_velocity)
+        stopping_distance = (self_speed**2) / (2 * self_acceleration.max_acceleration)
+
         # What has to actually happen to get to the navigation target?
         v_course_correction = v_navigation_target - (v_self_position + v_self_velocity)
 
         #Enfore maximum acceleration
         v_course_correction = v_course_correction / np.linalg.norm(v_course_correction)
         v_course_correction *= self_acceleration.max_acceleration
+
+        if stopping_distance >= np.linalg.norm(v_navigation_target - v_self_position):
+            v_course_correction = v_course_correction * -1
 
         #Accelerate to correct course
         self_acceleration.x = v_course_correction[0]
