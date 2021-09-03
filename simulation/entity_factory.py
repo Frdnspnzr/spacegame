@@ -41,3 +41,16 @@ def asteroid(world: esper.World) -> int:
         Velocity(0, 0),
         Name("Asteroid", f"AST-{asteroid_counter:05d}")
     )
+
+def enemy_fighter(world: esper.World) -> int:
+    return world.create_entity(
+        Position(10, 10),
+        Renderable("V", colors.OBJECT_ENEMY),
+        Velocity(0, 0),
+        Acceleration(0, 0, 0.001),
+        Selectable(),
+        Destructable(10, 20, 20),
+        Damageable(),
+        Behaviour(),
+        Name("Some wanker", "WNK-80085")
+    )

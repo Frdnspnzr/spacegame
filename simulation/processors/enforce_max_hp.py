@@ -4,7 +4,7 @@ import esper
 from simulation.components.destructable import Destructable
 
 
-class EnforceMaxHP(esper.Processor):
+class EnforceMaxHPProcessor(esper.Processor):
 
     def process(self, *args, **kwargs):
         for _, (destructable,) in self.world.get_components(Destructable):

@@ -1,17 +1,24 @@
 from __future__ import annotations
-from simulation.processors.enforce_max_hp import EnforceMaxHPProcessor
-from simulation.processors.enforce_max_acceleration import EnforceMaxAccelerationProcessor
+from behaviours.navigation import BehaviourPatrol
+from simulation.components.behaviour import Behaviour
 
 import time
 
-import colors
 import esper
-import renderer.primitives as primitives
-import simulation.entity_factory as factory
 import tcod
 import tcod.event
-from constants import (CONSOLE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH,
-                       SIDEBAR_WIDTH, STATUS_HEIGHT)
+from tcod.console import Console as tConsole
+from tcod.context import Context
+from tcod.random import Random
+
+import colors
+import renderer.primitives as primitives
+import simulation.entity_factory as factory
+from constants import CONSOLE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, SIDEBAR_WIDTH, STATUS_HEIGHT
+from engine.console import Console
+from engine.event_handler import EventHandler
+from engine.screen import Screen
+from engine.sidebar import Sidebar
 from simulation.components.acceleration import Acceleration
 from simulation.components.destructable import Destructable
 from simulation.components.position import Position
@@ -19,16 +26,10 @@ from simulation.components.selectable import Selectable
 from simulation.processors.acceleration import AccelerationProcessor
 from simulation.processors.apply_attributes import ApplyAttributesProcessor
 from simulation.processors.apply_damage import ApplyDamageProcessor
+from simulation.processors.enforce_max_acceleration import EnforceMaxAccelerationProcessor
+from simulation.processors.enforce_max_hp import EnforceMaxHPProcessor
 from simulation.processors.execute_behaviours import ExecuteBehaviourProcessor
 from simulation.processors.movement import MovementProcessor
-from tcod.console import Console as tConsole
-from tcod.context import Context
-from tcod.random import Random
-
-from engine.console import Console
-from engine.event_handler import EventHandler
-from engine.screen import Screen
-from engine.sidebar import Sidebar
 
 UPDATE_RATE = 1/60
 
@@ -53,11 +54,16 @@ class Engine(tcod.event.EventDispatch[None]):
             self.player_ship, Selectable).selected_main = True
 
         # Add some asteroids
-        for i in range(150):
+        for i in range(20):
             asteroid = factory.asteroid(self.world)
             position = Position(int(50 * rand_x.guass(0, 0.3)),
                                 int(50 * rand_y.guass(0, 0.3)))
             self.world.add_component(asteroid, position)
+
+        # Add patroling enemy
+        enemy = factory.enemy_fighter(self.world)
+        enemy_behaviour: Behaviour = self.world.component_for_entity(enemy, Behaviour)
+        enemy_behaviour.behaviours.append(BehaviourPatrol((10, 10), (10, -10), 2))
 
         # Add processors
         self.__initialize_processors()

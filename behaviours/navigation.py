@@ -97,3 +97,30 @@ class BehaviourFollow(BehaviourGoto):
             v_navigation_target = v_target_position + v_target_velocity
 
         return (v_navigation_target[0], v_navigation_target[1])
+
+class BehaviourPatrol(BehaviourGoto):
+
+    def __init__(self, target_a: Tuple[int, int], target_b: Tuple[int, int], distance: int = 0):
+        self.target_a = target_a
+        self.target_b = target_b
+        self.current_target_b = False
+        self.distance = distance
+
+    def _get_target_point(self, world: World, entity: int) -> Optional[Tuple[int, int]]:
+        self_position = world.component_for_entity(entity, Position)
+        patrol_target = self.__get_patrol_target()
+
+        v_self_position = np.array([self_position.x, self_position.y])
+        v_patrol_target = np.array([patrol_target[0], patrol_target[1]])
+
+        distance = np.linalg.norm(v_patrol_target - v_self_position)
+
+        if (distance <= self.distance):
+            self.current_target_b = not self.current_target_b
+            patrol_target = self.__get_patrol_target()
+            v_patrol_target = np.array([patrol_target[0], patrol_target[1]])
+
+        return (v_patrol_target[0], v_patrol_target[1])
+
+    def __get_patrol_target(self) -> Tuple[int, int]:
+        return self.target_b if self.current_target_b else self.target_a
