@@ -1,11 +1,11 @@
-from gameplay.attributes import Attributes as GameplayAttributes
+from gameplay.attribute import Attribute as GameplayAttribute
 
 class Attributes:
 
     def __init__(self) -> None:
         self.attributes = dict()
-        for attribute in GameplayAttributes:
+        for attribute in GameplayAttribute:
             self.attributes[attribute] = 0
 
-    def __getitem__(self, key: GameplayAttributes):
+    def __getitem__(self, key: GameplayAttribute):
         return self.attributes[key]

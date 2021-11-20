@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Attributes(Enum):
+class Attribute(Enum):
 
     # MOVEMENT
     MAX_ACCELERATION = 10
