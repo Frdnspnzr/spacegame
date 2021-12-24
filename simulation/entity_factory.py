@@ -8,12 +8,15 @@ from simulation.components.acceleration import Acceleration
 from simulation.components.behaviour import Behaviour
 from simulation.components.damageable import Damageable
 from simulation.components.destructable import Destructable
+from simulation.components.GameplayActor import GameplayActor
 from simulation.components.name import Name
 from simulation.components.player import Player
 from simulation.components.position import Position
 from simulation.components.renderable import Renderable
 from simulation.components.selectable import Selectable
 from simulation.components.velocity import Velocity
+
+from gameplay.data import templates
 
 asteroid_counter = 0
 
@@ -28,7 +31,8 @@ def player_ship(world: esper.World) -> int:
         Destructable(1000, 1000, 1000),
         Damageable(),
         Behaviour(),
-        Name("Player ship", "PLR-12345")
+        Name("Player ship", "PLR-12345"),
+        GameplayActor(templates.get("template:player"))
     )
 
 def asteroid(world: esper.World) -> int:
