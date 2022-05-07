@@ -1,5 +1,3 @@
-from typing import Optional, cast
-
 import tcod
 from behaviours.navigation import BehaviourFollow
 from esper import World
@@ -8,23 +6,25 @@ from simulation.components.behaviour import Behaviour
 from simulation.components.name import Name
 from simulation.components.player import Player
 from simulation.components.selectable import Selectable
-from tcod.console import Console as tConsole
+from tcod import Console
+from ui.screen import Screen
 
 
-class Console(tcod.event.EventDispatch[None]):
+class ConsoleView(Screen):
 
     def __init__(self, world: World):
-        self.world = world
+        super().__init__(world)
         self.follow_target = None
 
-    def render(self, console: tConsole, x: int, y: int, width: int, height: int) -> None:
-        console.print(x, y, f"NAV TARGET: {self._get_nav_target_name()}")
+    def _render_self(self, console: Console):
+        console.print(self.x, self.y,
+                      f"NAV TARGET: {self._get_nav_target_name()}")
 
-        text.with_highlighting(console, x, y+2, "[F]OLLOW")
-        console.print(x+9, y+2, self._get_highlighted_name())
-        text.with_highlighting(console, x, y+3, "[S]TOP")
+        text.with_highlighting(console, self.x, self.y+2, "[F]OLLOW")
+        console.print(self.x+9, self.y+2, self._get_highlighted_name())
+        text.with_highlighting(console, self.x, self.y+3, "[S]TOP")
 
-    def ev_keyup(self, event: tcod.event.KeyDown) -> None:
+    def _handle_event(self, event: tcod.event.KeyboardEvent):
 
         if event.scancode is tcod.event.SCANCODE_S:
             self.follow_target = None
@@ -53,12 +53,15 @@ class Console(tcod.event.EventDispatch[None]):
         return -1
 
     def _set_player_following(self, target: int):
-        behaviour = self.world.component_for_entity(self._get_player_entity(self.world), Behaviour)
+        behaviour = self.world.component_for_entity(
+            self._get_player_entity(self.world), Behaviour)
         behaviour.behaviours.append(BehaviourFollow(target, 3))
 
     def _set_player_stopping(self):
-        behaviour = self.world.component_for_entity(self._get_player_entity(self.world), Behaviour)
-        behaviour.behaviours = list() #FIXME Only possible because I know what behaviours are set
+        behaviour = self.world.component_for_entity(
+            self._get_player_entity(self.world), Behaviour)
+        # FIXME Only possible because I know what behaviours are set
+        behaviour.behaviours = list()
 
     def _get_player_entity(self, world: World) -> int:
         for entity, _ in self.world.get_component(Player):

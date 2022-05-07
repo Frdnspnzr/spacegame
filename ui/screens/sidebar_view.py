@@ -1,24 +1,21 @@
 import colors
 import tcod
-from esper import World
 from simulation.components.name import Name
 from simulation.components.renderable import Renderable
 from simulation.components.selectable import Selectable
-from tcod.console import Console
+from tcod import Console
+from ui.screen import Screen
 
 
-class Sidebar(tcod.event.EventDispatch[None]):
+class SidebarView(Screen):
 
-    def __init__(self, world: World):
-        self.world = world
-        self.entity_list = []
+    def _render_self(self, console: Console):
+        self.__render_header(console, self.x, self.y)
+        console.print(self.x, self.y+1, "∙"*self.width)
+        self.__render_entity_list(
+            console, self.x, self.y+2, self.width, self.height - 2)
 
-    def render(self, console: Console, x: int, y: int, width: int, height: int) -> None:
-        self.__render_header(console, x, y)
-        console.print(x, y+1, "∙"*width)
-        self.__render_entity_list(console, x, y+2, width, height - 2)
-
-    def ev_keyup(self, event: tcod.event.KeyDown) -> None:
+    def _handle_event(self, event: tcod.event.KeyboardEvent):
 
         if event.scancode is tcod.event.SCANCODE_MINUS:
             print("Scanner Reichweite wechseln")
@@ -38,25 +35,25 @@ class Sidebar(tcod.event.EventDispatch[None]):
                 speed = 5
             self.__scanner_down(speed)
 
-    def __scanner_down(self, speed = 1) -> None:
-            self.__move_scanner(self.entity_list, speed)
+    def __scanner_down(self, speed=1) -> None:
+        self.__move_scanner(self.entity_list, speed)
 
-    def __scanner_up(self, speed = 1) -> None:
-            self.__move_scanner(reversed(self.entity_list), speed)
+    def __scanner_up(self, speed=1) -> None:
+        self.__move_scanner(reversed(self.entity_list), speed)
 
-    def __move_scanner(self, list, speed = 1) -> None:
-            counter = 999999
-            selectable = None
-            for entity in list:
-                selectable = self.world.component_for_entity(entity, Selectable)
-                counter -= 1
-                if counter is 0:
-                    selectable.selected_main = True
-                    break
-                if selectable.selected_main:
-                    counter = speed
-                    selectable.selected_main = False
-            selectable.selected_main = True
+    def __move_scanner(self, list, speed=1) -> None:
+        counter = 999999
+        selectable = None
+        for entity in list:
+            selectable = self.world.component_for_entity(entity, Selectable)
+            counter -= 1
+            if counter == 0:
+                selectable.selected_main = True
+                break
+            if selectable.selected_main:
+                counter = speed
+                selectable.selected_main = False
+        selectable.selected_main = True
 
     def __render_header(self, console: Console, x: int, y: int) -> None:
         console.print(x, y, "RANGE: ", colors.TEXT_DEFAULT)
