@@ -32,7 +32,7 @@ class MainView(Screen):
     def __create_console_view(self):
         view = ConsoleView(self.world)
         view.width = SCREEN_WIDTH-SIDEBAR_WIDTH-1
-        view.height = CONSOLE_HEIGHT-1
+        view.height = CONSOLE_HEIGHT-2
         view.x = 1
         view.y = SCREEN_HEIGHT-CONSOLE_HEIGHT+1
         return view

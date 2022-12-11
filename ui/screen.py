@@ -28,6 +28,7 @@ class Screen(object):
 
     def add_screen(self, screen: Screen):
         self.__sub_screens.append(screen)
+        screen.on_add()
 
     def remove_screen(self, screen: Screen):
         self.__sub_screens.remove(screen)
@@ -91,6 +92,9 @@ class Screen(object):
         pass
 
     def _handle_event(self, event: tcod.event.KeyboardEvent):
+        pass
+
+    def on_add(self):
         pass
 
     def __check_bounds(self) -> None:
