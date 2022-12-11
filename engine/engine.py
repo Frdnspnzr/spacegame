@@ -90,10 +90,14 @@ class Engine(tcod.event.EventDispatch[None]):
         acceleration = self.world.component_for_entity(
             self.player_ship, Acceleration)
 
-        if event.scancode is tcod.event.SCANCODE_W or tcod.event.SCANCODE_S:
-            acceleration.y = 0
-        if event.scancode is tcod.event.SCANCODE_A or tcod.event.SCANCODE_D:
-            acceleration.x = 0
+        if event.scancode == tcod.event.SCANCODE_W and event.mod & tcod.event.KMOD_LCTRL:
+            acceleration.y -= 0.01
+        if event.scancode == tcod.event.SCANCODE_S and event.mod & tcod.event.KMOD_LCTRL:
+            acceleration.y += 0.01
+        if event.scancode == tcod.event.SCANCODE_A and event.mod & tcod.event.KMOD_LCTRL:
+            acceleration.x -= 0.01
+        if event.scancode == tcod.event.SCANCODE_D and event.mod & tcod.event.KMOD_LCTRL:
+            acceleration.x += 0.01
 
     def ev_quit(self, _: tcod.event.Quit) -> None:
         raise SystemExit()
