@@ -16,9 +16,9 @@ def with_highlighting(
     dx = x
     color = text_color
     for char in text:
-        if char is "[":
+        if char == "[":
             color = highlight_color
         console.print(dx, y, char, color, background_color)
-        if char is "]":
+        if char == "]":
             color = text_color
         dx = dx + 1
