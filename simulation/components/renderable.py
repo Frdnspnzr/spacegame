@@ -1,8 +1,10 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
-class Renderable():
+from simulation.components.component import Component
 
-    def __init__(self, char: str, color: Tuple[int, int, int]):
+class Renderable(Component):
+
+    def __init__(self, char: Optional[str] = "", color: Optional[Tuple[int, int, int]] = (0,0,0)):
         super().__init__()
         self.char = char
         self.color = color

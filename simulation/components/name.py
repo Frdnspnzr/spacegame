@@ -1,6 +1,10 @@
-class Name():
+from typing import Optional
+from simulation.components.component import Component
 
-    def __init__(self, name: str, callsign: str):
+
+class Name(Component):
+
+    def __init__(self, name: Optional[str] = "", callsign: Optional[str] = ""):
         super().__init__()
         self.name = name
         self.callsign = callsign

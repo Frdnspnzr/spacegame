@@ -1,9 +1,11 @@
-from typing import cast
+from typing import Optional, cast
+
+from simulation.components.component import Component
 
 
-class Position():
+class Position(Component):
 
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: Optional[int] = 0, y: Optional[int] = 0):
         super().__init__()
         self.__x = cast(float, x)
         self.__y = cast(float, y)

@@ -1,17 +1,23 @@
 from __future__ import annotations
 
+import datetime
+import json
+import os
 import time
 
 import esper
-import simulation.entity_factory as factory
 import tcod
 import tcod.event
-from behaviours.navigation import BehaviourPatrol
+from tcod.console import Console as tConsole
+from tcod.context import Context
+from tcod.random import Random
+
+import simulation.components
+import simulation.entity_factory as factory
+from behaviours import BehaviourPatrol
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
-from simulation.components.acceleration import Acceleration
-from simulation.components.behaviour import Behaviour
-from simulation.components.position import Position
-from simulation.components.selectable import Selectable
+from simulation.components import (Acceleration, Behaviour, Player, Position,
+                                   Selectable)
 from simulation.processors.acceleration import AccelerationProcessor
 from simulation.processors.apply_attributes import ApplyAttributesProcessor
 from simulation.processors.apply_damage import ApplyDamageProcessor
@@ -20,9 +26,6 @@ from simulation.processors.enforce_max_acceleration import \
 from simulation.processors.enforce_max_hp import EnforceMaxHPProcessor
 from simulation.processors.execute_behaviours import ExecuteBehaviourProcessor
 from simulation.processors.movement import MovementProcessor
-from tcod.console import Console as tConsole
-from tcod.context import Context
-from tcod.random import Random
 from ui.screens.main_view import MainView
 
 UPDATE_RATE = 1/60
@@ -43,6 +46,12 @@ class Engine(tcod.event.EventDispatch[None]):
         self.last_update = time.monotonic()
         self.accumulator = 0
 
+        # Add processors
+        self.__initialize_processors()
+
+    def initialize_test_data(self):
+        self.world.clear_database()
+
         rand_x = Random()
         rand_y = Random()
 
@@ -50,7 +59,6 @@ class Engine(tcod.event.EventDispatch[None]):
         self.player_ship = factory.player_ship(self.world)
         self.world.component_for_entity(
             self.player_ship, Selectable).selected_main = True
-
         # Add some asteroids
         for i in range(20):
             asteroid = factory.asteroid(self.world)
@@ -65,8 +73,41 @@ class Engine(tcod.event.EventDispatch[None]):
         enemy_behaviour.behaviours.append(
             BehaviourPatrol((10, 10), (10, -10), 2))
 
-        # Add processors
-        self.__initialize_processors()
+    def initialize_from_file(self, filename: str):
+        self.world.clear_database()
+        self.__deserialize_world(filename)
+
+    def __deserialize_world(self, filename: str):
+        with open(filename, "r") as f:
+            id_mapping = dict()
+            deserialized = json.load(f)
+            for entity, _ in deserialized["entities"].items():
+                new_entity = self.world.create_entity()
+                id_mapping[int(entity)] = new_entity
+            for entity, components in deserialized["entities"].items():
+                for name, data in components.items():
+                    component = getattr(simulation.components, name)()
+                    component.fromDict(data, id_mapping)
+                    self.world.add_component(id_mapping[int(entity)], component)
+
+        for (e, _) in self.world.get_component(Player):
+            self.player_ship = e
+
+    def __serialize_world(self, filepath):
+        if os.path.exists(filepath):
+            os.remove(filepath)
+        with open(filepath, "w") as f:
+            serialized = dict({"version": 1, "time": str(datetime.datetime.now()), "entities": dict()})
+            for e in list(self.world._entities):
+                serialized["entities"][e] = self.__get_components_as_json(e)
+            json.dump(serialized, f)
+
+    def __get_components_as_json(self, entity: int):
+        components = self.world.components_for_entity(entity)
+        serialized = dict()
+        for c in components:
+            serialized[type(c).__name__] = c.toDict()
+        return serialized
 
     def update(self) -> None:
         self.__update_accumulator()
@@ -100,6 +141,7 @@ class Engine(tcod.event.EventDispatch[None]):
             acceleration.x += 0.01
 
     def ev_quit(self, _: tcod.event.Quit) -> None:
+        self.__serialize_world("autosave.sgs")
         raise SystemExit()
 
     def __update_accumulator(self) -> None:

@@ -1,6 +1,10 @@
-class Destructable:
+from typing import Optional
+from simulation.components.component import Component
 
-    def __init__(self, core: int, hull: int, shield: int):
+
+class Destructable(Component):
+
+    def __init__(self, core: Optional[int] = 0, hull: Optional[int] = 0, shield: Optional[int] = 0):
         self.core_max = self.core_current = core
         self.hull_max = self.hull_current = hull
         self.shield_max = self.shield_current = shield

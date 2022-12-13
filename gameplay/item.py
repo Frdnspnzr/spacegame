@@ -1,4 +1,7 @@
-class Item:
+from utility.saveable import Saveable
+
+
+class Item(Saveable):
 
     def __init__(self):
         self.name = "?"

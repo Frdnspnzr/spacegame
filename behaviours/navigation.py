@@ -1,8 +1,7 @@
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 from esper import World
-from numpy import linalg
 
 from engine.behaviour import Behaviour
 from simulation.components.acceleration import Acceleration
@@ -12,7 +11,7 @@ from simulation.components.velocity import Velocity
 
 class BehaviourGoto(Behaviour):
 
-    def __init__(self, target_x: int, target_y: int):
+    def __init__(self, target_x: Optional[int] = 0, target_y: Optional[int] = 0):
         self.__target_x = target_x
         self.__target_y = target_y
         self.__valid = True
@@ -66,7 +65,7 @@ class BehaviourGoto(Behaviour):
 
 class BehaviourFollow(BehaviourGoto):
 
-    def __init__(self, target: int, distance: int = 0):
+    def __init__(self, target: Optional[int] = 0, distance: Optional[int] = 0):
         self.__distance = distance
         self.__target = target
 
@@ -105,9 +104,14 @@ class BehaviourFollow(BehaviourGoto):
 
         return (v_navigation_target[0], v_navigation_target[1])
 
+    def fromDict(self, dictionary, id_mapping: Dict[int, int] = dict()):
+        super().fromDict(dictionary, id_mapping)
+        self.__target = id_mapping[self.__target]
+
 class BehaviourPatrol(BehaviourGoto):
 
-    def __init__(self, target_a: Tuple[int, int], target_b: Tuple[int, int], distance: int = 0):
+    def __init__(self, target_a: Optional[Tuple[int, int]] = (0,0),
+            target_b: Optional[Tuple[int, int]] = (1,1), distance: Optional[int] = 0):
         self.target_a = target_a
         self.target_b = target_b
         self.current_target_b = False

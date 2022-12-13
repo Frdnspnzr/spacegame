@@ -2,11 +2,13 @@ from enum import Enum
 
 from esper import World
 
+from utility.saveable import Saveable
+
 
 class BehaviourGroup(Enum):
     pass
 
-class Behaviour(object):
+class Behaviour(Saveable):
 
     @property
     def priority(self) -> float:

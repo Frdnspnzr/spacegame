@@ -1,13 +1,13 @@
-from enum import Enum
+from enum import IntEnum
 
 
-class Stacking(Enum):
+class Stacking(IntEnum):
 
     ADDITIVE = 1
     MULTIPLICATIVE = 2
 
 
-class Attribute(Enum):
+class Attribute(IntEnum):
 
     # MOVEMENT
     MAX_ACCELERATION = 10
